@@ -17,14 +17,13 @@ import time
 import re
 #____________________________________________#
 
-Client = discord.Client()
 status = ['Use', 'The', 'Prefix', ';']
 startup_extensions = ["Music"]
 bot = commands.Bot(command_prefix=';') #This will be the prefix for your bot
 bot.remove_command("help")
 
-class Main_Commands():
-        def _init_(self, bot):
+class Main_Commands(commands.Cog):
+        def __init__(self, bot):
          self.bot = bot
 
 #____________________________________________#
@@ -51,19 +50,19 @@ async def on_member_join(member):
     await bot.add_roles(member, role)
 
 #____________________________________________#
-@bot.command(pass_context=True)
+@bot.command()
 async def equip(ctx):
-    await bot.say("***Keyboard***\nRazer Blackwidow\n***Mouse***\nRazer Death Adder\n***Microphone***\nSnowball Mic\n***Mods***\nBadlion Client")
+    await ctx.send("***Keyboard***\nRazer Blackwidow\n***Mouse***\nRazer Death Adder\n***Microphone***\nSnowball Mic\n***Mods***\nBadlion Client")
 
 
 
 
 #____________________________________________#    
 
-@bot.command(pass_context=True)
+@bot.command()
 async def help(ctx):
-    await bot.say("You Have Been Sent Help In Your Messages!")    
-    author = ctx.message.author
+    await ctx.send("You Have Been Sent Help In Your Messages!")    
+    author = ctx.author
     embed = discord.Embed(
         colour = discord.Colour.red()
     )
@@ -89,20 +88,21 @@ async def on_message(message):
         if word.lower() in chat_filter:
             if not message.author.id in bypass_filter:
                 try:
-                    await bot.delete_message(message)
-                    await bot.send_message(message.channel, "You can't say that, Sorry!")
+                    await message.delete()
+(
+                    await message.channel.send("You can't say that, Sorry!")
                 except discord.errors.NotFound:
                     return
     await bot.process_commands(message)
     url = re.findall('http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+', message.content.lower())
     if url and message.channel.id == "405815888177266689":
-             await bot.delete_message(message)  
+             await message.delete() 
 
 
-@bot.command(pass_context=True)
+@bot.command()
 async def report(ctx,reported:discord.Member, *, message):
     message=f'***Reportee:***\n{ctx.message.author.mention}\n***Reporting:***\n{reported.mention}\n ***Reason For Report:***\n*{message}*'
-    await bot.send_message(bot.get_channel("489134651970027541"), message)
+    await bot.get_channel("489134651970027541").send(message)
 
 
 
